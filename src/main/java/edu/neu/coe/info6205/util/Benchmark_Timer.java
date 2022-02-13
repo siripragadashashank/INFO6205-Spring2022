@@ -4,6 +4,11 @@
 
 package edu.neu.coe.info6205.util;
 
+import edu.neu.coe.info6205.graphs.BFS_and_prims.StdRandom;
+import edu.neu.coe.info6205.sort.elementary.InsertionSort;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -125,4 +130,112 @@ public class Benchmark_Timer<T> implements Benchmark<T> {
     private final Consumer<T> fPost;
 
     final static LazyLogger logger = new LazyLogger(Benchmark_Timer.class);
+
+    public static void main(String[] args) {
+
+        int initLen = 200;
+
+        int numTimes = 50;
+
+        int maxLen = 1000000;
+
+        InsertionSort<Integer> insSort =new InsertionSort<Integer>();
+
+        Consumer<Integer[]> consumer=array-> insSort.sort(array, 0, array.length);
+
+        Benchmark_Timer<Integer[]> benchmarkTimer = new Benchmark_Timer<Integer[]>("Insertion Sort", consumer);
+
+        System.out.println("-----------------------------Randomly Ordered---------------------------------------");
+
+        for (int i = initLen; i < 20000; i += i)
+        {
+            int dblLength = i;
+
+            Supplier<Integer[]> supplier = () ->
+            {
+                Integer[] nums = new Integer[dblLength];
+
+                for (int j = 0; j < dblLength; j++)
+                {
+                    nums[j] = StdRandom.uniform(-maxLen, maxLen);
+                }
+                return nums;
+            };
+
+            System.out.println("Length = " + dblLength +", Time : " + benchmarkTimer.runFromSupplier(supplier, numTimes) + " ms");
+        }
+
+        System.out.println("-----------------------------Ordered----------------------------------------------");
+
+        for (int i = initLen; i < 20000; i += i)
+        {
+            int dblLength = i;
+
+            Supplier<Integer[]> supplier = () ->
+            {
+                Integer[] nums = new Integer[dblLength];
+
+                for (int j = 0; j < dblLength; j++)
+                {
+                    nums[j] = StdRandom.uniform(-maxLen, maxLen);
+                }
+
+                Arrays.sort(nums);
+
+                return nums;
+            };
+
+            System.out.println("Length = " + dblLength +", Time : " + benchmarkTimer.runFromSupplier(supplier, numTimes)+ " ms");
+        }
+
+        System.out.println("-----------------------------Partially Ordered--------------------------------------");
+
+        for (int i = initLen; i < 20000; i += i)
+        {
+            int dblLength = i;
+
+            Supplier<Integer[]> supplier = () ->
+            {
+                Integer[] nums = new Integer[dblLength];
+
+                for (int j = 0; j < dblLength; j++)
+                {
+                    nums[j] = StdRandom.uniform(-maxLen, maxLen);
+                }
+
+                Arrays.sort(nums);
+
+                for (int j = 0; j < dblLength/2; j++)
+                {
+                    nums[j] = StdRandom.uniform(-maxLen, maxLen);
+                }
+                return nums;
+            };
+
+            System.out.println("Length = " + dblLength +", Time : " + benchmarkTimer.runFromSupplier(supplier, numTimes) + " ms");
+        }
+
+        System.out.println("-----------------------------Reverse Ordered---------------------------------------");
+
+        for (int i = initLen; i < 20000; i += i)
+        {
+            int dblLength = i;
+
+            Supplier<Integer[]> supplier = () ->
+            {
+                Integer[] nums = new Integer[dblLength];
+
+                for (int j = 0; j < dblLength; j++)
+                {
+                    nums[j] = StdRandom.uniform(-maxLen, maxLen);
+                }
+
+                Arrays.sort(nums, Collections.reverseOrder());
+
+                return nums;
+            };
+
+            System.out.println("Length = " + dblLength +", Time : " + benchmarkTimer.runFromSupplier(supplier, numTimes)+ " ms");
+        }
+    }
 }
